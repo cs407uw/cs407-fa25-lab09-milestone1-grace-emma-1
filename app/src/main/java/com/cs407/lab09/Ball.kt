@@ -23,7 +23,7 @@ class Ball(
     private var isFirstUpdate = true
 
     init {
-        // TODO: Call reset()
+        reset()
     }
 
     /**
@@ -37,7 +37,27 @@ class Ball(
             accY = yAcc
             return
         }
+        val dt = dT.coerceAtMost(0.05f) // 50 ms cap
+        if (dt <= 0f) return
 
+        val a0x = accX
+        val a0y = accY
+        val a1x = xAcc
+        val a1y = yAcc
+        // new velocity = old velocity + 1/2(a1 + a0) * (t1 - t0)
+        val newVelocityX = velocityX + 0.5f * (a1x + a0x) * dt
+        val newVelocityY = velocityY + 0.5f * (a1y + a0y) * dt
+
+        val newPosX = velocityX * dt + (dt * dt / 6f) * (3f * a0x + a1x)
+        val newPosY = velocityY * dt + (dt * dt / 6f) * (3f * a0y + a1y)
+
+        accX = a1x
+        accY = a1y
+        posX += newPosX
+        posY += newPosY
+        velocityX = newVelocityX
+        velocityY = newVelocityY
+        checkBoundaries()
     }
 
     /**
@@ -46,8 +66,23 @@ class Ball(
      * boundary should be set to 0.
      */
     fun checkBoundaries() {
-        // TODO: implement the checkBoundaries function
         // (Check all 4 walls: left, right, top, bottom)
+        if (posX < 0f) { // left wall
+            posX = 0f
+            velocityX = 0f
+
+        } else if (posX > backgroundWidth - ballSize) { // right wall
+            posX = backgroundWidth - ballSize
+            velocityX = 0f
+        }
+        if (posY < 0f) { // top wall
+            posY = 0f
+            velocityY = 0f
+
+        } else if (posY > backgroundHeight - ballSize) { // bottom wall
+            posY = backgroundHeight - ballSize
+            velocityY = 0f
+        }
     }
 
     /**
@@ -55,7 +90,13 @@ class Ball(
      * velocity and acceleration.
      */
     fun reset() {
-        // TODO: implement the reset function
         // (Reset posX, posY, velocityX, velocityY, accX, accY, isFirstUpdate)
+        posX = (backgroundWidth - ballSize) / 2f
+        posY = (backgroundHeight - ballSize) / 2f
+        velocityX = 0f
+        velocityY = 0f
+        accX = 0f
+        accY = 0f
+        isFirstUpdate = true
     }
 }
