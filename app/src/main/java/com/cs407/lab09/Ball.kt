@@ -37,19 +37,18 @@ class Ball(
             accY = yAcc
             return
         }
-        val dt = dT.coerceAtMost(0.05f) // 50 ms cap
-        if (dt <= 0f) return
+        val dt = dT
 
         val a0x = accX
         val a0y = accY
-        val a1x = xAcc
-        val a1y = yAcc
+        val a1x = xAcc * 50f
+        val a1y = yAcc * 50f
         // new velocity = old velocity + 1/2(a1 + a0) * (t1 - t0)
         val newVelocityX = velocityX + 0.5f * (a1x + a0x) * dt
         val newVelocityY = velocityY + 0.5f * (a1y + a0y) * dt
 
-        val newPosX = velocityX * dt + (dt * dt / 6f) * (3f * a0x + a1x)
-        val newPosY = velocityY * dt + (dt * dt / 6f) * (3f * a0y + a1y)
+        val newPosX = velocityX * dt + ((dt * dt) / 6f) * (3f * a0x + a1x)
+        val newPosY = velocityY * dt + ((dt * dt) / 6f) * (3f * a0y + a1y)
 
         accX = a1x
         accY = a1y
